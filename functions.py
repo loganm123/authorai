@@ -1,10 +1,20 @@
+#import necessary modules
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import keras as keras
+import gutenbergpy.textget
+from knockknock import discord_sender
+from webhook_url import *
+
 def preprocess(texts):
     X = np.array(tokenizer.texts_to_sequences(texts)) - 1
     return tf.one_hot(X, max_id)
 
 #function to train the model
 @discord_sender(webhook_url=webhook_url)
-def train_model(dataset, epochs):
+def train_model(model, dataset, epochs):
     history = model.fit(dataset, epochs=epochs)
     return history
 
@@ -53,3 +63,8 @@ def get_clean_tokenize_encode(id):
     global encoded
     [encoded]= np.array(tokenizer.texts_to_sequences([book]))-1
     return encoded
+
+def complete_text(text, n_chars=50, temperature=1):
+    for _ in range(n_chars):
+        text += next_char(text, temperature)
+    return text
